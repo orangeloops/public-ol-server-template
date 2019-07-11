@@ -1,0 +1,131 @@
+### Handling responses in the HTTP Client
+### https://blog.jetbrains.com/phpstorm/2018/04/handling-reponses-in-the-http-client
+
+### API
+
+GET {{graphql_endpoint}}?query={version}
+
+###
+
+GET {{graphql_endpoint}}?query={reset}
+
+### USER
+
+GET {{graphql_endpoint}}?query={me {id name email status imageUrl}}
+x-token: {{token}}
+
+> {%
+  client.assert(response.status === 200, "Status: " + response.status);
+
+  client.global.set("userId", response.body.data.me.id);
+%}
+
+###
+
+GET {{graphql_endpoint}}?query={user(id: "33e374ef-cd3f-4899-a22f-e4fa28adff11") {id name status}}
+
+### AUTHENTICATION
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+
+{
+  "query": "mutation {checkEmail(email: \"test@dummy.com\") {isAvailable isBlacklisted}}"
+}
+
+###
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+
+{
+  "query": "mutation {resendEmailConfirmation(email: \"test@dummy.com\") {_}}"
+}
+
+###
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+
+{
+  "query": "mutation {signUp(name: \"Test\", email: \"test@dummy.com\", password: \"test\") {_}}"
+}
+
+###
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+
+{
+  "query": "mutation {confirmEmail(token: \"token-here\") {_}}"
+}
+
+###
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+
+{
+  "query": "mutation {signIn(email: \"test@dummy.com\", password: \"test\", generateRefreshToken: true) {token refreshToken}}"
+}
+
+> {%
+  client.assert(response.status === 200, "Status: " + response.status);
+
+  client.global.set("token", response.body.data.signIn.token);
+  client.global.set("refreshToken", response.body.data.signIn.refreshToken);
+%}
+
+###
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+
+{
+  "query": "mutation {refreshTokens(token: \"{{refreshToken}}\") {token refreshToken}}"
+}
+
+> {%
+  client.assert(response.status === 200, "Status: " + response.status);
+
+  client.global.set("token", response.body.data.refreshTokens.token);
+  client.global.set("refreshToken", response.body.data.refreshTokens.refreshToken);
+%}
+
+###
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+
+{
+  "query": "mutation {requestResetPassword(email: \"test@dummy.com\") {_}}"
+}
+
+###
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+
+{
+  "query": "mutation {resetPassword(token: \"token-here\" password: \"test\") {_}}"
+}
+
+### USER
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+x-token: {{token}}
+
+{
+  "query": "mutation {updateUser(id: \"id-here\" name: \"Update user test\") {id name}}"
+}
+
+###
+
+POST {{graphql_endpoint}}
+Content-Type: application/json
+x-token: {{token}}
+
+{
+  "query": "mutation {deleteUser(id: \"id-here\")}"
+}
