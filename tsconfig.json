@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    /* Basic Options */
+    "target": "es6",
+    /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'. */
+    "module": "commonjs",
+    /* Specify module code generation: 'commonjs', 'amd', 'system', 'umd' or 'es2015'. */
+    "lib": ["dom", "es5", "es6", "esnext.asynciterable"],
+    /* Specify library files to be included in the compilation:  */
+    "sourceRoot": "./src/",
+    /* Specify the location where debugger should locate TypeScript files instead of source locations. */
+    "outDir": "./build/",
+    /* Do not emit comments to output. */
+    "strict": false,
+    /* Enable all strict type-checking options. */
+    "noImplicitAny": true,
+    /* Raise error on expressions and declarations with an implied 'any' type. */
+    "inlineSourceMap": true,
+    /* Emit a single file with source maps instead of having a separate file. */
+    "inlineSources": true,
+    /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
+    "typeRoots": ["./node_modules/@types", "typings"],
+    /* List of folders to include type definitions from. */
+    "experimentalDecorators": true,
+    /* Enables experimental support for ES7 decorators. */
+    "emitDecoratorMetadata": true,
+    /* Enables experimental support for emitting type metadata for decorators. */
+    "checkJs": false,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/.cache/typescript"
+  },
+  "include": ["./typings/**/*", "./src/**/*"],
+  "exclude": ["node_modules"]
+}
