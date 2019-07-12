@@ -17,7 +17,6 @@
 - [ESlint](https://eslint.org/) for JavaScript/TypeScript linting.
 - [Husky](https://github.com/typicode/husky/) for Git hooks support.
 - [Lint-staged](https://github.com/okonet/lint-staged/) to run linters on git staged files.
-- [Bundlesize](https://github.com/siddharthkp/bundlesize/) to check size of bundle's files.
 
 
 ## Getting Start
