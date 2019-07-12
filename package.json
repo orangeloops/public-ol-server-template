@@ -77,7 +77,8 @@
     "tslib": "1.10.0",
     "typedi": "0.8.0",
     "uuid": "3.3.2",
-    "winston": "3.2.1"
+    "winston": "3.2.1",
+    "snyk": "^1.193.0"
   },
   "scripts": {
     "start:watch": "NODE_ENV=development ./node_modules/.bin/ts-node-dev --respawn --transpileOnly src/Index",
@@ -89,6 +90,9 @@
     "lint:code": "eslint '*/**/*.{js,ts,tsx}'",
     "lint:code:fix": "npm run lint:code -- --fix",
     "npm:clean": "rm -rf node_modules package-lock.json && npm cache clean --force && npm rebuild && npm install --loglevel silly",
-    "new_secret_key": "node -e \"console.log(require('crypto').randomBytes(256).toString('base64'));\""
-  }
+    "new_secret_key": "node -e \"console.log(require('crypto').randomBytes(256).toString('base64'));\"",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
