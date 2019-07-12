@@ -26,7 +26,7 @@
     "@types/node": "12.6.2",
     "@types/sequelize": "4.28.3",
     "@types/uuid": "3.4.5",
-    "@typescript-eslint/eslint-plugin": "1.11.0",
+    "@typescript-eslint/eslint-plugin": "1.12.0",
     "@typescript-eslint/parser": "1.11.0",
     "dotenv-cli": "2.0.0",
     "eslint": "6.0.1",
