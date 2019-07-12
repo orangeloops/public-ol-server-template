@@ -31,6 +31,6 @@ export default class APIHelper {
   }
 
   static getVersion(): string {
-    return `1.0.0${process.env.GAE_VERSION ? " (" + process.env.GAE_VERSION + ")" : ""}`;
+    return `1.0.x${process.env.GAE_VERSION ? " (" + process.env.GAE_VERSION + ")" : ""}`;
   }
 }
