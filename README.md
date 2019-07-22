@@ -19,7 +19,7 @@
 - [Lint-staged](https://github.com/okonet/lint-staged/) to run linters on git staged files.
 
 
-## Getting Start
+## Getting Started
 
 Run the following commands in your terminal
 

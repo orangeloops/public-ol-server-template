@@ -23,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # webstorm
+/.idea/
 /.idea/httpRequests
 /.idea/httpRequests/http-requests-log.http
 /.idea/inspectionProfiles/profiles_settings.xml
