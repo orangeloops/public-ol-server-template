@@ -51,7 +51,7 @@
     "@google-cloud/storage": "3.0.2",
     "@graphql-modules/core": "0.7.7",
     "@graphql-modules/utils": "0.4.0",
-    "apollo-server": "2.6.9",
+    "apollo-server": "2.8.1",
     "apollo-server-express": "2.6.9",
     "base-x": "3.0.6",
     "bcrypt": "3.0.6",
