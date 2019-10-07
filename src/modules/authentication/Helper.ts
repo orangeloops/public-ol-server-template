@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as express from "express";
 import {AuthenticationError} from "apollo-server-express";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import {VerifyErrors} from "jsonwebtoken";
 import {ModuleSessionInfo} from "@graphql-modules/core";
