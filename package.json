@@ -31,7 +31,7 @@
     "@typescript-eslint/parser": "2.3.2",
     "cross-env": "6.0.3",
     "cross-spawn": "7.0.1",
-    "dotenv-cli": "2.0.1",
+    "dotenv-cli": "3.0.0",
     "eslint": "6.5.1",
     "eslint-config-prettier": "6.3.0",
     "eslint-loader": "3.0.2",
