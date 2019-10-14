@@ -72,6 +72,6 @@ export class Server {
       }
 
       server.listen({port: config.port}, () => winston.info(`🚀 Server ready at http${config.ssl ? "s" : ""}://${config.hostname}:${config.port}${this.apolloServer.graphqlPath}`));
-    });
+    }).catch(err => console.error(err));
   }
 }
