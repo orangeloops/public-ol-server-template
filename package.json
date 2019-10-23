@@ -57,7 +57,7 @@
     "@graphql-modules/core": "0.7.13",
     "@graphql-modules/utils": "0.4.0",
     "apollo-server": "2.9.4",
-    "apollo-server-express": "2.9.4",
+    "apollo-server-express": "2.9.7",
     "base-x": "3.0.7",
     "bcryptjs": "2.4.3",
     "body-parser": "1.19.0",
