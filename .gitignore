@@ -23,12 +23,15 @@ yarn-debug.log*
 yarn-error.log*
 
 # webstorm
-/.idea/
 /.idea/httpRequests
 /.idea/httpRequests/http-requests-log.http
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/usage.statistics.xml
 /.idea/workspace.xml
+/.idea
+
+# vs code
+/.vscode
 
 # others
 .Spotlight-V100

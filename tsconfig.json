@@ -19,6 +19,7 @@
     /* Emit a single file with source maps instead of having a separate file. */
     "inlineSources": true,
     /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
+    "types": ["node"],
     "typeRoots": ["./node_modules/@types", "typings"],
     /* List of folders to include type definitions from. */
     "experimentalDecorators": true,
@@ -27,10 +28,8 @@
     /* Enables experimental support for emitting type metadata for decorators. */
     "checkJs": false,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "incremental": true,
-    "tsBuildInfoFile": "./node_modules/.cache/typescript"
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["./typings/**/*", "./src/**/*"],
+  "include": ["./typings/**/*", "./src/**/*", "scripts/*"],
   "exclude": ["node_modules"]
 }

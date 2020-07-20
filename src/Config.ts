@@ -1,4 +1,5 @@
 import * as dotenv from "dotenv";
+import {UserStatus} from "./db/models/User";
 
 dotenv.config({path: `.env.${process.env.NODE_ENV}`});
 dotenv.config();
@@ -14,6 +15,8 @@ export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 export const ACCESS_TOKEN_EXPIRATION = process.env.ACCESS_TOKEN_EXPIRATION;
 export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 export const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION;
+
+export const DEFAULT_USER_STATUS = UserStatus.Active;
 
 export const GOOGLE_STORAGE_ROOT = process.env.GOOGLE_STORAGE_ROOT;
 export const GOOGLE_STORAGE_BUCKET = process.env.GOOGLE_STORAGE_BUCKET;

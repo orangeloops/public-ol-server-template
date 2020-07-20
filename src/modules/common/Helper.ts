@@ -3,15 +3,15 @@ import * as uuid from "uuid";
 import {ForbiddenError, UserInputError} from "apollo-server";
 import {Storage} from "@google-cloud/storage";
 import * as config from "../../Config";
-import {FileOwnerType, IFileMetadata, IServerContext, IUploadFileResponse} from "./Models";
+import {FileOwnerType, FileMetadata, ServerContext, UploadFileResponse} from "./Models";
 
 const base64 = require("base-x")("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-export type NextResolverFunction = (parent: any, args: any, context: IServerContext, info: any) => void;
+export type NextResolverFunction = (parent: any, args: any, context: ServerContext, info: any) => void;
 
 export const COMMON_PROVIDER_CLASS = "COMMON_PROVIDER_CLASS";
 
-export interface ICommonProvider {}
+export type CommonProviderType = {};
 
 export const throwInvalidMeError = () => {
   throw new ForbiddenError("Not authenticated");
@@ -34,7 +34,7 @@ export default class CommonHelper {
 
   static parseCursorHash = (hash: string): string => Buffer.from(hash, "base64").toString("ascii");
 
-  static getUUID(short: boolean = true): string {
+  static getUUID(short = true): string {
     if (short) {
       const buf = new Buffer(16);
       const uuidLong = uuid.v4(null, buf);
@@ -48,8 +48,8 @@ export default class CommonHelper {
     } else return uuid.v4();
   }
 
-  static uploadFile(storage: Storage, ownerType: FileOwnerType, ownerId: string, upload: any, metadata?: IFileMetadata): Promise<IUploadFileResponse> {
-    return new Promise<IUploadFileResponse>(async (resolve, reject) => {
+  static uploadFile(storage: Storage, ownerType: FileOwnerType, ownerId: string, upload: any, metadata?: FileMetadata): Promise<UploadFileResponse> {
+    return new Promise<UploadFileResponse>(async (resolve, reject) => {
       const {stream: readStream, filename: uploadFilename, mimetype: uploadMimetype, encoding: uploadEncoding} = await upload;
 
       const bucket = await storage.bucket(config.GOOGLE_STORAGE_BUCKET);
@@ -70,7 +70,7 @@ export default class CommonHelper {
         },
       });
 
-      writeStream.on("error", error => reject(error));
+      writeStream.on("error", (error) => reject(error));
 
       writeStream.on("finish", () => {
         const publicUrl = `https://storage.googleapis.com/${file.bucket.name}/${file.name}`;

@@ -30,7 +30,7 @@ POST {{graphql_endpoint}}
 Content-Type: application/json
 
 {
-  "query": "mutation {checkEmail(email: \"test@dummy.com\") {isAvailable isBlacklisted}}"
+  "query": "mutation {checkEmail(email: \"user@dummy.com\") {isAvailable isBlacklisted}}"
 }
 
 ###
@@ -39,7 +39,7 @@ POST {{graphql_endpoint}}
 Content-Type: application/json
 
 {
-  "query": "mutation {resendEmailConfirmation(email: \"test@dummy.com\") {_}}"
+  "query": "mutation {resendEmailConfirmation(email: \"dgomez@orangeloops.com\") {_}}"
 }
 
 ###
@@ -48,7 +48,7 @@ POST {{graphql_endpoint}}
 Content-Type: application/json
 
 {
-  "query": "mutation {signUp(name: \"Test\", email: \"test@dummy.com\", password: \"test\") {_}}"
+  "query": "mutation {signUp(name: \"Daniel\", email: \"dgomez@orangeloops.com\", password: \"Password01\") {_}}"
 }
 
 ###
@@ -57,7 +57,7 @@ POST {{graphql_endpoint}}
 Content-Type: application/json
 
 {
-  "query": "mutation {confirmEmail(token: \"token-here\") {_}}"
+  "query": "mutation {confirmEmail(token: \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYzU3N2ZkMTEtMjYwNS00MGM2LTgwZjMtYzcyNmVmOTdlNzU1IiwiZW1haWwiOiJkZ29tZXpAb3JhbmdlbG9vcHMuY29tIiwiY29kZSI6IkRJOFFEQ0YzTkdwWmxuOU1ULW13MnEifSwiaWF0IjoxNTU2ODI2NTQyLCJleHAiOjE1NTY5MTI5NDJ9.qAKCoaI6kXpkq_iUdQlrXJfMZoVdR7xTuPa56-JC2qs\") {_}}"
 }
 
 ###
@@ -66,7 +66,7 @@ POST {{graphql_endpoint}}
 Content-Type: application/json
 
 {
-  "query": "mutation {signIn(email: \"test@dummy.com\", password: \"test\", generateRefreshToken: true) {token refreshToken}}"
+  "query": "mutation {signIn(email: \"dgomez@orangeloops.com\", password: \"Password01\", generateRefreshToken: true) {token refreshToken}}"
 }
 
 > {%
@@ -98,7 +98,7 @@ POST {{graphql_endpoint}}
 Content-Type: application/json
 
 {
-  "query": "mutation {requestResetPassword(email: \"test@dummy.com\") {_}}"
+  "query": "mutation {requestResetPassword(email: \"dgomez@orangeloops.com\") {_}}"
 }
 
 ###
@@ -107,7 +107,7 @@ POST {{graphql_endpoint}}
 Content-Type: application/json
 
 {
-  "query": "mutation {resetPassword(token: \"token-here\" password: \"test\") {_}}"
+  "query": "mutation {resetPassword(token: \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRnb21lekBvcmFuZ2Vsb29wcy5jb20iLCJjb2RlIjoiQkM1R2dZTHR4SG9iQXJiX2VLMkRTXyIsImlhdCI6MTU0Nzc1MDUwNywiZXhwIjoxNTQ3ODM2OTA3fQ.UyrjtCwhtmAstOrDGrd1OnYSyjHeCQ2oq2cWUAMSNzI\" password: \"Password02\") {_}}"
 }
 
 ### USER
@@ -117,7 +117,7 @@ Content-Type: application/json
 x-token: {{token}}
 
 {
-  "query": "mutation {updateUser(id: \"id-here\" name: \"Update user test\") {id name}}"
+  "query": "mutation {updateUser(id: \"f9d4ac73-9756-4e20-8c70-fead0c588814\" name: \"Update user test\") {id name}}"
 }
 
 ###
@@ -127,5 +127,5 @@ Content-Type: application/json
 x-token: {{token}}
 
 {
-  "query": "mutation {deleteUser(id: \"id-here\")}"
+  "query": "mutation {deleteUser(id: \"d087c5d5-1e8e-4eb0-8ea8-372655851d1f\")}"
 }

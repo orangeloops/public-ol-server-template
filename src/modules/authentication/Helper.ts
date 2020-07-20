@@ -1,18 +1,18 @@
 import * as _ from "lodash";
 import * as express from "express";
 import {AuthenticationError} from "apollo-server-express";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import {VerifyErrors} from "jsonwebtoken";
 import {ModuleSessionInfo} from "@graphql-modules/core";
 import {getFieldsWithDirectives} from "@graphql-modules/utils";
 import {NextResolverFunction, throwInvalidMeError} from "../common/Helper";
-import {IServerContext, IUserRef} from "../common/Models";
+import {ServerContext, UserRef} from "../common/Models";
 import User from "../../db/models/User";
 
 export const AUTHENTICATION_PROVIDER_CLASS = "AUTHENTICATION_PROVIDER_CLASS";
 
-export const isAuthenticated = () => (next: NextResolverFunction) => async (parent: any, args: any, context: IServerContext, info: any) => {
+export const isAuthenticated = () => (next: NextResolverFunction) => async (parent: any, args: any, context: ServerContext, info: any) => {
   const {models, currentUser} = context;
 
   let user: User;
@@ -53,7 +53,7 @@ export const resolversComposition = ({typeDefs}: any) => {
   return result;
 };
 
-export interface IAuthenticationModuleConfig {
+export type AuthenticationModuleConfig = {
   ACCESS_TOKEN_SECRET: string;
   ACCESS_TOKEN_EXPIRATION: string;
   REFRESH_TOKEN_SECRET: string;
@@ -67,26 +67,26 @@ export interface IAuthenticationModuleConfig {
   MAILJET_ACTIVATION_LINK: string;
   MAILJET_PASSWORD_TEMPLATE_ID: string;
   MAILJET_PASSWORD_LINK: string;
-}
+};
 
-export interface IAuthenticationModuleRequest {
+export type AuthenticationModuleRequest = {
   req: express.Request;
-}
+};
 
-export interface IAuthenticationProvider {
-  context: (request: IAuthenticationModuleRequest, currentContext: IServerContext, sessionInfo: ModuleSessionInfo<IAuthenticationModuleConfig, IAuthenticationModuleRequest, IServerContext>) => Promise<any>;
-  signUp: (name: string, email: string, password: string, upload: any, context: IServerContext) => Promise<any>;
-  signIn: (email: string, password: string, generateRefreshToken: boolean, context: IServerContext) => Promise<any>;
-  refreshTokens: (token: string, context: IServerContext) => Promise<any>;
-  checkEmail: (email: string, context: IServerContext) => Promise<any>;
-  confirmEmail: (token: string, context: IServerContext) => Promise<User>;
-  resendEmailConfirmation: (email: string, context: IServerContext) => Promise<any>;
-  requestResetPassword: (email: string, context: IServerContext) => Promise<any>;
-  resetPassword: (token: string, password: string, context: IServerContext) => Promise<any>;
-}
+export type AuthenticationProviderType = {
+  context: (request: AuthenticationModuleRequest, currentContext: ServerContext, sessionInfo: ModuleSessionInfo<AuthenticationModuleConfig, AuthenticationModuleRequest, ServerContext>) => Promise<any>;
+  signUp: (name: string, email: string, password: string, upload: any, context: ServerContext) => Promise<any>;
+  signIn: (email: string, password: string, generateRefreshToken: boolean, context: ServerContext) => Promise<any>;
+  refreshTokens: (token: string, context: ServerContext) => Promise<any>;
+  checkEmail: (email: string, context: ServerContext) => Promise<any>;
+  confirmEmail: (token: string, context: ServerContext) => Promise<void>;
+  resendEmailConfirmation: (email: string, context: ServerContext) => Promise<any>;
+  requestResetPassword: (email: string, context: ServerContext) => Promise<any>;
+  resetPassword: (token: string, password: string, context: ServerContext) => Promise<any>;
+};
 
 export default class AuthenticationHelper {
-  static refFromUser(user: User): IUserRef {
+  static refFromUser(user: User): UserRef {
     return {
       id: user.id,
       name: user.name,
@@ -121,21 +121,21 @@ export default class AuthenticationHelper {
     });
   }
 
-  static async verifyTokenFromRequest(request: IAuthenticationModuleRequest, secretOrPublicKey: string, currentContext: IServerContext): Promise<any> {
+  static async verifyTokenFromRequest(request: AuthenticationModuleRequest, secretOrPublicKey: string, currentContext: ServerContext): Promise<any> {
     const token = request.req.headers["x-token"];
 
     try {
-      if (_.isString(token) && token.length > 0) return await AuthenticationHelper.verifyToken(token, secretOrPublicKey);
+      if (_.isString(token) && token.length > 0) return AuthenticationHelper.verifyToken(token, secretOrPublicKey);
     } catch (e) {
       throw new AuthenticationError("Invalid authentication token");
     }
   }
 
   static async generatePasswordHash(password: string): Promise<string> {
-    return await bcrypt.hash(password, 10);
+    return bcrypt.hash(password, 10);
   }
 
   static async validatePassword(value: string, password: string): Promise<boolean> {
-    return await bcrypt.compare(value, password);
+    return bcrypt.compare(value, password);
   }
 }
