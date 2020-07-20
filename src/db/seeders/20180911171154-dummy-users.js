@@ -1,7 +1,8 @@
 "use strict";
+const bcrypt = require("bcryptjs");
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
       "user",
       [
@@ -9,7 +10,7 @@ module.exports = {
           id: "11111111-1111-1111-1111-111111111111",
           name: "John Doe",
           email: "test@orangeloops.com",
-          password: "Password01",
+          password: await bcrypt.hash("Password01", 10),
           imageUrl: "https://storage.googleapis.com/ideasource.appspot.com/image/user-default.png",
           status: 1,
           createdDate: new Date(),
