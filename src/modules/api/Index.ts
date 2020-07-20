@@ -3,8 +3,8 @@ import typeDefs from "./Schema";
 import resolvers from "./Resolvers";
 import {API_PROVIDER_CLASS, isStagingOrDevelopment} from "./Helper";
 import APIProvider from "./Provider";
-import {CommonModule} from "../common";
-import {AuthenticationModule} from "../authentication";
+import {CommonModule} from "../common/Index";
+import {AuthenticationModule} from "../authentication/Index";
 
 export const APIModule = new GraphQLModule({
   name: "APIModule",
@@ -12,8 +12,7 @@ export const APIModule = new GraphQLModule({
   resolvers,
   imports: [CommonModule, AuthenticationModule],
   providers: [{provide: API_PROVIDER_CLASS, useClass: APIProvider}],
-  // TODO-DG: Review Typescript definition for resolversComposition
   resolversComposition: {
-    "Query.reset": [isStagingOrDevelopment()] as any,
+    "Query.reset": [isStagingOrDevelopment()],
   },
 });

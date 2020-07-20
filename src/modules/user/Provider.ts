@@ -2,24 +2,24 @@ import * as _ from "lodash";
 import {Injectable} from "@graphql-modules/di";
 import {ForbiddenError} from "apollo-server";
 import CommonHelper from "../common/Helper";
-import {IUserProvider} from "./Helper";
+import {UserProviderType} from "./Helper";
 import User from "../../db/models/User";
-import {FileType, IServerContext, FileOwnerType} from "../common/Models";
+import {FileType, ServerContext, FileOwnerType} from "../common/Models";
 import {DestroyOptions} from "sequelize";
 
 @Injectable()
-export default class UserProvider implements IUserProvider {
-  async me({models, currentUser}: IServerContext): Promise<User> {
+export default class UserProvider implements UserProviderType {
+  async me({models, currentUser}: ServerContext): Promise<User> {
     if (_.isNil(currentUser)) return undefined;
 
-    return await models.User.findByPk(currentUser.id);
+    return models.User.findByPk(currentUser.id);
   }
 
-  async user(id: string, {models}: IServerContext): Promise<User> {
-    return await models.User.findByPk(id);
+  async user(id: string, {models}: ServerContext): Promise<User> {
+    return models.User.findByPk(id);
   }
 
-  async updateUser(id: string, name: string, upload: any, {storage, models}: IServerContext): Promise<User> {
+  async updateUser(id: string, name: string, upload: any, {storage, models}: ServerContext): Promise<User> {
     const object = await models.User.findByPk(id);
 
     if (_.isNil(object)) return;
@@ -45,7 +45,7 @@ export default class UserProvider implements IUserProvider {
     return object;
   }
 
-  async deleteUser(id: string, {storage, models, currentUser}: IServerContext): Promise<User> {
+  async deleteUser(id: string, {storage, models, currentUser}: ServerContext): Promise<boolean> {
     if (_.isNil(currentUser) || currentUser.id !== id) throw new ForbiddenError("Invalid user");
 
     const destroyOptions: DestroyOptions = {where: {id: id}};
@@ -54,6 +54,6 @@ export default class UserProvider implements IUserProvider {
 
     if (result) await CommonHelper.deleteFile(storage, FileOwnerType.User, id);
 
-    return result;
+    return result > 0;
   }
 }

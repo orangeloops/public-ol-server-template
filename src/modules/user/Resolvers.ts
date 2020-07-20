@@ -1,24 +1,27 @@
 import {GraphQLModule} from "@graphql-modules/core";
-import {IServerContext} from "../common/Models";
-import {IUserProvider, USER_PROVIDER_CLASS} from "./Helper";
+import {UserProviderType, USER_PROVIDER_CLASS} from "./Helper";
+import {Resolvers} from "../Resolvers.types";
 
-export default ({injector}: GraphQLModule) => {
-  const provider = injector.get<IUserProvider>(USER_PROVIDER_CLASS);
+export default ({injector}: GraphQLModule): Resolvers => {
+  const provider = injector.get<UserProviderType>(USER_PROVIDER_CLASS);
 
   return {
     Query: {
-      me: async (parent: any, args: any, context: IServerContext) => provider.me(context),
+      me: async (parent, args, context) => provider.me(context),
 
-      user: async (parent: any, {id}: any, context: IServerContext) => provider.user(id, context),
+      user: async (parent, {id}, context) => provider.user(id, context),
     },
-    UserStatus: {
-      PENDING: 0,
-      ACTIVE: 1,
-      BLOCKED: -1,
+    ...{
+      // TODO-SG: Wait for https://github.com/dotansimha/graphql-code-generator/issues/3444
+      UserStatus: {
+        PENDING: 0,
+        ACTIVE: 1,
+        BLOCKED: -1,
+      },
     },
     Mutation: {
-      updateUser: async (parent: any, {id, name, upload}: any, context: IServerContext) => provider.updateUser(id, name, upload, context),
-      deleteUser: async (parent: any, {id, upload}: any, context: IServerContext) => provider.deleteUser(id, context),
+      updateUser: async (parent, {id, name, upload}, context) => provider.updateUser(id, name, upload, context),
+      deleteUser: async (parent, {id}, context) => provider.deleteUser(id, context),
     },
   };
 };
