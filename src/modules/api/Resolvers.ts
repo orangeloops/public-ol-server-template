@@ -1,14 +1,18 @@
 import {GraphQLModule} from "@graphql-modules/core";
-import {IServerContext} from "../common/Models";
-import {IAPIProvider, API_PROVIDER_CLASS} from "./Helper";
+import {ServerContext} from "../common/Models";
+import {APIProviderType, API_PROVIDER_CLASS} from "./Helper";
+import {Resolvers} from "../Resolvers.types";
 
-export default ({injector}: GraphQLModule) => {
-  const provider = injector.get<IAPIProvider>(API_PROVIDER_CLASS);
+export default ({injector}: GraphQLModule): Resolvers => {
+  const provider = injector.get<APIProviderType>(API_PROVIDER_CLASS);
 
   return {
     Query: {
-      version: async (parent: any, args: any, context: IServerContext) => provider.version(context),
-      reset: async (parent: any, args: any, context: IServerContext) => provider.reset(context),
+      version: async (parent, args, context: ServerContext) => provider.version(context),
+      reset: async (parent, args, context: ServerContext) => {
+        provider.reset(context);
+        return null;
+      },
     },
   };
 };

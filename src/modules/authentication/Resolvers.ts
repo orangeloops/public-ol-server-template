@@ -1,20 +1,25 @@
 import {GraphQLModule} from "@graphql-modules/core";
-import {IServerContext} from "../common/Models";
-import {AUTHENTICATION_PROVIDER_CLASS, IAuthenticationProvider} from "./Helper";
+import {ServerContext} from "../common/Models";
+import {AUTHENTICATION_PROVIDER_CLASS, AuthenticationProviderType} from "./Helper";
+import {Resolvers} from "../Resolvers.types";
 
-export default ({injector}: GraphQLModule) => {
-  const provider = injector.get<IAuthenticationProvider>(AUTHENTICATION_PROVIDER_CLASS);
+export default ({injector}: GraphQLModule): Resolvers => {
+  const provider = injector.get<AuthenticationProviderType>(AUTHENTICATION_PROVIDER_CLASS);
 
   return {
     Mutation: {
-      signUp: async (parent: any, {name, email, password, upload}: any, context: IServerContext) => provider.signUp(name, email, password, upload, context),
-      signIn: async (parent: any, {email, password, generateRefreshToken}: any, context: IServerContext) => provider.signIn(email, password, generateRefreshToken, context),
-      refreshTokens: async (parent: any, {token}: any, context: IServerContext) => provider.refreshTokens(token, context),
-      checkEmail: async (parent: any, {email}: any, context: IServerContext) => provider.checkEmail(email, context),
-      confirmEmail: async (parent: any, {token}: any, context: IServerContext) => provider.confirmEmail(token, context),
-      resendEmailConfirmation: async (parent: any, {email}: any, context: IServerContext) => provider.resendEmailConfirmation(email, context),
-      requestResetPassword: async (parent: any, {email}: any, context: IServerContext) => provider.requestResetPassword(email, context),
-      resetPassword: async (parent: any, {token, password}: any, context: IServerContext) => provider.resetPassword(token, password, context),
+      signUp: async (parent, {name, email, password, upload}, context: ServerContext) => provider.signUp(name, email, password, upload, context),
+      signIn: async (parent, {email, password, generateRefreshToken}, context: ServerContext) => provider.signIn(email, password, generateRefreshToken, context),
+      refreshTokens: async (parent, {token}, context: ServerContext) => provider.refreshTokens(token, context),
+      checkEmail: async (parent, {email}, context: ServerContext) => provider.checkEmail(email, context),
+      confirmEmail: async (parent, {token}, context: ServerContext) => {
+        await provider.confirmEmail(token, context);
+
+        return {};
+      },
+      resendEmailConfirmation: async (parent, {email}, context: ServerContext) => provider.resendEmailConfirmation(email, context),
+      requestResetPassword: async (parent, {email}, context: ServerContext) => provider.requestResetPassword(email, context),
+      resetPassword: async (parent, {token, password}, context: ServerContext) => provider.resetPassword(token, password, context),
     },
   };
 };

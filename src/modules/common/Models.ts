@@ -1,35 +1,36 @@
 import {ModuleContext} from "@graphql-modules/core";
 import {File, Storage} from "@google-cloud/storage";
+import models from "../../db/models/Index";
 
-export type IServerContext = ModuleContext<{
+export type ServerContext = ModuleContext<{
   storage: Storage;
-  models: any;
-  currentUser?: IUserRef;
+  models: typeof models;
+  currentUser?: UserRef;
 }>;
 
-export interface IUserRef {
+export type UserRef = {
   id: string;
   name: string;
   email: string;
   imageUrl: string;
-}
+};
 
 // region Relay
-export interface IEdge<T> {
+export type Edge<T> = {
   node: T;
   cursor: string;
-}
+};
 
-export interface IPageInfo {
+export type PageInfo = {
   endCursor?: string;
   hasNextPage: boolean;
-}
+};
 
-export interface IRelayConnection<T> {
-  edges: IEdge<T>[];
-  pageInfo: IPageInfo;
+export type RelayConnection<T> = {
+  edges: Edge<T>[];
+  pageInfo: PageInfo;
   totalCount: number;
-}
+};
 
 export const ConnectionOrderDirection = {
   ASC: "ASC",
@@ -46,15 +47,15 @@ export enum FileType {
   Image = "image",
 }
 
-export interface IFileMetadata {
+export type FileMetadata = {
   _ownerType?: FileOwnerType;
   _ownerId?: string;
   _fileType?: string;
-}
+};
 
-export interface IUploadFileResponse {
+export type UploadFileResponse = {
   file?: File;
   publicUrl?: string;
-}
+};
 
 // endregion

@@ -1,10 +1,10 @@
 import {gql} from "apollo-server-express";
 
 export default gql`
-  type Mutation {
+  extend type Mutation {
     signUp(name: String!, email: String!, password: String!, upload: Upload): Void
-    signIn(email: String!, password: String!, generateRefreshToken: Boolean = false): Tokens
-    refreshTokens(token: String!): Tokens
+    signIn(email: String!, password: String!, generateRefreshToken: Boolean = false): AccessToken
+    refreshTokens(token: String!): AccessToken
     checkEmail(email: String!): CheckEmail
     confirmEmail(token: String!): Void
     resendEmailConfirmation(email: String!): Void
@@ -18,8 +18,9 @@ export default gql`
     isCorporate: Boolean
   }
 
-  type Tokens {
+  type AccessToken {
     token: String!
     refreshToken: String
+    expiresAt: DateTime
   }
 `;

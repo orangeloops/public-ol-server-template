@@ -5,11 +5,11 @@ import {Express} from "express";
 import {ApolloServer} from "apollo-server-express";
 import {GraphQLModule} from "@graphql-modules/core";
 import {createExpressServer} from "routing-controllers";
-import {sequelize} from "./db/models";
-import {CommonModule} from "./modules/common";
-import {APIModule} from "./modules/api";
-import {AuthenticationModule} from "./modules/authentication";
-import {UserModule} from "./modules/user";
+import {sequelize} from "./db/models/Index";
+import {CommonModule} from "./modules/common/Index";
+import {APIModule} from "./modules/api/Index";
+import {AuthenticationModule} from "./modules/authentication/Index";
+import {UserModule} from "./modules/user/Index";
 
 const fs = require("fs");
 const https = require("https");
@@ -56,22 +56,25 @@ export class Server {
 
     this.apolloServer.applyMiddleware({app: this.app, path: "/graphql"});
 
-    sequelize.sync({force: this.eraseDatabaseOnSync}).then(async () => {
-      let server;
+    sequelize
+      .sync({force: this.eraseDatabaseOnSync})
+      .then(async () => {
+        let server;
 
-      if (config.ssl) {
-        server = https.createServer(
-          {
-            key: fs.readFileSync(`./config/ssl/server.key`),
-            cert: fs.readFileSync(`./config/ssl/server.cert`),
-          },
-          this.app
-        );
-      } else {
-        server = http.createServer(this.app);
-      }
+        if (config.ssl) {
+          server = https.createServer(
+            {
+              key: fs.readFileSync(`./config/ssl/server.key`),
+              cert: fs.readFileSync(`./config/ssl/server.cert`),
+            },
+            this.app
+          );
+        } else {
+          server = http.createServer(this.app);
+        }
 
-      server.listen({port: config.port}, () => winston.info(`🚀 Server ready at http${config.ssl ? "s" : ""}://${config.hostname}:${config.port}${this.apolloServer.graphqlPath}`));
-    }).catch(err => console.error(err));
+        server.listen({port: config.port}, () => winston.info(`🚀 Server ready at http${config.ssl ? "s" : ""}://${config.hostname}:${config.port}${this.apolloServer.graphqlPath}`));
+      })
+      .catch((err) => console.error(err));
   }
 }

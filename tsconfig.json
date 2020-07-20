@@ -28,9 +28,7 @@
     /* Enables experimental support for emitting type metadata for decorators. */
     "checkJs": false,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "incremental": true,
-    "tsBuildInfoFile": "./node_modules/.cache/typescript"
+    "allowSyntheticDefaultImports": true
   },
   "include": ["./typings/**/*", "./src/**/*", "scripts/*"],
   "exclude": ["node_modules"]

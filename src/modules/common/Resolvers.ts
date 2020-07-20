@@ -1,13 +1,12 @@
 import {GraphQLModule} from "@graphql-modules/core";
 import {GraphQLDateTime} from "graphql-iso-date";
-import {ICommonProvider, COMMON_PROVIDER_CLASS} from "./Helper";
-import {ConnectionOrderDirection} from "./Models";
+import {COMMON_PROVIDER_CLASS, CommonProviderType} from "./Helper";
+import {Resolvers} from "../Resolvers.types";
 
-export default ({injector}: GraphQLModule) => {
-  const provider = injector.get<ICommonProvider>(COMMON_PROVIDER_CLASS);
+export default ({injector}: GraphQLModule): Resolvers => {
+  const provider = injector.get<CommonProviderType>(COMMON_PROVIDER_CLASS);
 
   return {
     DateTime: GraphQLDateTime,
-    ConnectionOrderDirection: {...ConnectionOrderDirection},
   };
 };

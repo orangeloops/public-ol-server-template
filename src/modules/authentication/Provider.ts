@@ -4,29 +4,33 @@ import {AuthenticationError, UserInputError} from "apollo-server-express";
 import {ModuleConfig} from "@graphql-modules/core";
 import {ModuleSessionInfo} from "@graphql-modules/core";
 import {Inject, Injectable} from "@graphql-modules/di";
-import dbModels from "../../db/models";
-import User, {IRefreshToken, UserStatus} from "../../db/models/User";
+import dbModels from "../../db/models/Index";
+import * as config from "../../Config";
+import User, {RefreshToken, UserStatus} from "../../db/models/User";
 import CommonHelper from "../common/Helper";
-import AuthenticationHelper, {IAuthenticationModuleConfig, IAuthenticationModuleRequest, IAuthenticationProvider} from "./Helper";
-import {FileOwnerType, FileType, IServerContext} from "../common/Models";
+import AuthenticationHelper, {AuthenticationModuleConfig, AuthenticationModuleRequest, AuthenticationProviderType} from "./Helper";
+import {FileOwnerType, FileType, ServerContext} from "../common/Models";
+import * as moment from "moment";
+
+const ms = require("ms");
 
 const cloudStorage = new Storage();
 
 @Injectable()
-export default class AuthenticationProvider implements IAuthenticationProvider {
-  constructor(@Inject(ModuleConfig("AuthenticationModule")) private config: IAuthenticationModuleConfig) {}
+export default class AuthenticationProvider implements AuthenticationProviderType {
+  constructor(@Inject(ModuleConfig("AuthenticationModule")) private config: AuthenticationModuleConfig) {}
 
-  async context(request: IAuthenticationModuleRequest, currentContext: IServerContext, sessionInfo: ModuleSessionInfo<IAuthenticationModuleConfig, IAuthenticationModuleRequest, IServerContext>): Promise<IServerContext> {
+  async context(request: AuthenticationModuleRequest, currentContext: ServerContext, sessionInfo: ModuleSessionInfo<AuthenticationModuleConfig, AuthenticationModuleRequest, ServerContext>): Promise<ServerContext> {
     const tokenPayload = await AuthenticationHelper.verifyTokenFromRequest(request, sessionInfo.module.config.ACCESS_TOKEN_SECRET, currentContext);
 
     return {
       storage: cloudStorage,
       models: dbModels,
       currentUser: !_.isNil(tokenPayload) ? tokenPayload.user : undefined,
-    } as IServerContext;
+    } as ServerContext;
   }
 
-  async signUp(name: string, email: string, password: string, upload: any, {storage, models}: IServerContext) {
+  async signUp(name: string, email: string, password: string, upload: any, {storage, models}: ServerContext) {
     const errorMessage = "Email already in use";
 
     email = email.trim().toLowerCase();
@@ -57,7 +61,7 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
       password: password,
       imageUrl: imageUrl,
 
-      status: UserStatus.Pending,
+      status: config.DEFAULT_USER_STATUS,
       customData: {
         activation: {
           code: code,
@@ -66,10 +70,10 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
       },
     });
 
-    return await this.sendEmailConfirmation(user.id, user.name, email, code).catch(error => console.log(error));
+    return this.sendEmailConfirmation(user.id, user.name, email, code).catch((error) => console.log(error));
   }
 
-  async signIn(email: string, password: string, generateRefreshToken: boolean, {models}: IServerContext) {
+  async signIn(email: string, password: string, generateRefreshToken: boolean, {models}: ServerContext) {
     const errorMessage = "You have entered an invalid username or password";
 
     email = email.trim().toLowerCase();
@@ -101,7 +105,9 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
 
     const userRef = AuthenticationHelper.refFromUser(user);
 
-    const accessToken = await AuthenticationHelper.createToken({user: userRef}, this.config.ACCESS_TOKEN_SECRET, this.config.ACCESS_TOKEN_EXPIRATION);
+    const {ACCESS_TOKEN_EXPIRATION} = this.config;
+    const expiresAt = moment().add(ms(ACCESS_TOKEN_EXPIRATION), "milliseconds");
+    const accessToken = await AuthenticationHelper.createToken({user: userRef}, this.config.ACCESS_TOKEN_SECRET, ACCESS_TOKEN_EXPIRATION);
     let refreshToken: string = undefined;
 
     if (generateRefreshToken) {
@@ -115,10 +121,14 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
       });
     }
 
-    return {token: accessToken, refreshToken: refreshToken};
+    return {
+      token: accessToken,
+      refreshToken: refreshToken,
+      expiresAt: expiresAt.toISOString(),
+    };
   }
 
-  async refreshTokens(token: string, {models}: IServerContext) {
+  async refreshTokens(token: string, {models}: ServerContext) {
     const errorMessage = "Invalid user or token";
 
     const tokenPayload: any = await AuthenticationHelper.verifyToken(token, this.config.REFRESH_TOKEN_SECRET);
@@ -145,26 +155,32 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
 
     let refreshTokens = user.refreshTokens || [];
 
-    const savedRefreshToken: IRefreshToken = refreshTokens.find((r: IRefreshToken) => r.token === token);
+    const savedRefreshToken: RefreshToken = refreshTokens.find((r: RefreshToken) => r.token === token);
 
     if (_.isNil(savedRefreshToken) || !savedRefreshToken!.enabled) throw new UserInputError(errorMessage);
 
     const userRef = AuthenticationHelper.refFromUser(user);
 
-    const accessToken = await AuthenticationHelper.createToken({user: userRef}, this.config.ACCESS_TOKEN_SECRET, this.config.ACCESS_TOKEN_EXPIRATION);
+    const {ACCESS_TOKEN_EXPIRATION} = this.config;
+    const expiresAt = moment().add(ms(ACCESS_TOKEN_EXPIRATION), "milliseconds");
+    const accessToken = await AuthenticationHelper.createToken({user: userRef}, this.config.ACCESS_TOKEN_SECRET, ACCESS_TOKEN_EXPIRATION);
     const refreshToken: string = await AuthenticationHelper.createToken({user: userRef}, this.config.REFRESH_TOKEN_SECRET, this.config.REFRESH_TOKEN_EXPIRATION);
 
-    refreshTokens = refreshTokens.filter((r: IRefreshToken) => r.token !== token);
+    refreshTokens = refreshTokens.filter((r: RefreshToken) => r.token !== token);
     refreshTokens.push({token: refreshToken, enabled: true});
 
     await user.update({
       refreshTokens: refreshTokens,
     });
 
-    return {token: accessToken, refreshToken: refreshToken};
+    return {
+      token: accessToken,
+      refreshToken: refreshToken,
+      expiresAt: expiresAt.toISOString(),
+    };
   }
 
-  async checkEmail(email: string, {models}: IServerContext) {
+  async checkEmail(email: string, {models}: ServerContext) {
     email = email.trim().toLowerCase();
 
     const user = await models.User.findOne({where: {email: email}});
@@ -178,7 +194,7 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
     };
   }
 
-  async resendEmailConfirmation(email: string, {models}: IServerContext) {
+  async resendEmailConfirmation(email: string, {models}: ServerContext) {
     email = email.trim().toLowerCase();
 
     const user = await models.User.findOne({where: {email: email}});
@@ -198,7 +214,7 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
       },
     });
 
-    await this.sendEmailConfirmation(user.id, user.name, email, code).catch(error => console.log(error));
+    await this.sendEmailConfirmation(user.id, user.name, email, code).catch((error) => console.log(error));
   }
 
   async sendMessage(userId: string, name: string, email: string, subject?: string, templateId?: string, variables?: any): Promise<any> {
@@ -254,7 +270,7 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
     });
   }
 
-  async confirmEmail(token: string, {models}: IServerContext): Promise<User> {
+  async confirmEmail(token: string, {models}: ServerContext): Promise<void> {
     const errorMessage = "Invalid email or confirmation code";
 
     const tokenPayload: any = await AuthenticationHelper.verifyToken(token, this.config.ACCESS_TOKEN_SECRET);
@@ -285,13 +301,13 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
     const customData = user.customData;
     delete customData.activation;
 
-    return await user.update({
+    await user.update({
       status: UserStatus.Active,
       customData: customData,
     });
   }
 
-  async requestResetPassword(email: string, {models}: IServerContext): Promise<any> {
+  async requestResetPassword(email: string, {models}: ServerContext): Promise<any> {
     const errorMessage = "Invalid email or confirmation code";
 
     email = email.trim().toLowerCase();
@@ -323,7 +339,7 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
     });
   }
 
-  async resetPassword(token: string, password: string, {models}: IServerContext): Promise<User> {
+  async resetPassword(token: string, password: string, {models}: ServerContext): Promise<User> {
     const errorMessage = "Invalid email or confirmation code";
 
     const tokenPayload: any = await AuthenticationHelper.verifyToken(token, this.config.ACCESS_TOKEN_SECRET);
@@ -353,7 +369,7 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
 
     password = await AuthenticationHelper.generatePasswordHash(password);
 
-    return await user.update({
+    return user.update({
       password: password,
       customData: customData,
     });

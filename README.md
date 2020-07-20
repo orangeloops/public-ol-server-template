@@ -1,6 +1,10 @@
 # Server Project Boilerplate
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](https://github.com/orangeloops/public-ol-server-template/pulls) [![GitHub](https://img.shields.io/github/license/orangeloops/public-ol-server-template.svg)](https://github.com/orangeloops/public-ol-server-template/blob/develop/LICENSE)
 
+This [server template](https://orangeloops.com/2019/08/open-source-templates-for-building-react-and-reactnative-apps/) is an empty project prepared with primary software libraries and configurations needed to begin.
+It has sample authentication methods used, for instance, for signing in or signing up. Besides, everything needed to connect to a database is already set.
+The project is ready to work with our React web app template and our React Native mobile app template, providing a unified experience among the three.
+
 ## Components
 
 - [Node.js](https://nodejs.org/en//) for JavaScript runtime.
@@ -27,7 +31,8 @@ Run the following commands in your terminal
 git clone https://github.com/orangeloops/public-ol-server-template.git
 cd public-ol-server-template
 npm install
-npm start:watch
+npm run db:create
+npm run start:watch
 ```
 [ Optional ] Run `db:seed` to charge the database with initial dummy values
 

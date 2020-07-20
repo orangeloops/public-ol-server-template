@@ -8,8 +8,8 @@ module.exports = {
         {
           id: "11111111-1111-1111-1111-111111111111",
           name: "John Doe",
-          email: "user@dummy.com",
-          password: "user",
+          email: "test@orangeloops.com",
+          password: "Password01",
           imageUrl: "https://storage.googleapis.com/ideasource.appspot.com/image/user-default.png",
           status: 1,
           createdDate: new Date(),

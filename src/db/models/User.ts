@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import {Table, Column, Model, CreatedAt, UpdatedAt, DeletedAt, DataType, BeforeCreate} from "sequelize-typescript";
 import AuthenticationHelper from "../../modules/authentication/Helper";
-import {IUserRef} from "../../modules/common/Models";
+import {UserRef} from "../../modules/common/Models";
 
 export enum UserStatus {
   Pending = 0,
@@ -9,7 +9,7 @@ export enum UserStatus {
   Blocked = -1,
 }
 
-export interface IStatusData {
+export type StatusData = {
   activation: {
     code: string;
     codeDate: Date;
@@ -18,12 +18,12 @@ export interface IStatusData {
     code: string;
     codeDate: Date;
   };
-}
+};
 
-export interface IRefreshToken {
+export type RefreshToken = {
   token: string;
   enabled: boolean;
-}
+};
 
 @Table({tableName: "user"})
 export default class User extends Model<User> {
@@ -40,13 +40,13 @@ export default class User extends Model<User> {
   password: string;
 
   @Column({type: DataType.JSONB})
-  refreshTokens: IRefreshToken[];
+  refreshTokens: RefreshToken[];
 
   @Column({allowNull: false, defaultValue: UserStatus.Pending})
   status: UserStatus;
 
   @Column({type: DataType.JSONB})
-  customData: IStatusData;
+  customData: StatusData;
 
   @Column
   imageUrl: string;
@@ -70,7 +70,7 @@ export default class User extends Model<User> {
     if (_.isNil(user.imageUrl)) user.imageUrl = "https://storage.googleapis.com/ideasource.appspot.com/image/user-default.png";
   }
 
-  static getDomain(user: User | IUserRef): string | undefined {
+  static getDomain(user: User | UserRef): string | undefined {
     let result: string = undefined;
 
     if (!_.isNil(user.email)) {

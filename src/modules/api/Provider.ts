@@ -1,17 +1,17 @@
 import {Injectable} from "@graphql-modules/di";
-import {IServerContext} from "../common/Models";
-import APIHelper, {IAPIProvider} from "./Helper";
-import {sequelize} from "../../db/models";
+import {ServerContext} from "../common/Models";
+import APIHelper, {APIProviderType} from "./Helper";
+import {sequelize} from "../../db/models/Index";
 
 @Injectable()
-export default class APIProvider implements IAPIProvider {
+export default class APIProvider implements APIProviderType {
   constructor() {}
 
-  version(context: IServerContext): string {
+  version(context: ServerContext): string {
     return APIHelper.getVersion();
   }
 
-  reset(context: IServerContext): void {
+  reset(context: ServerContext): void {
     sequelize.sync({force: true});
   }
 }

@@ -2,19 +2,19 @@ import {GraphQLModule} from "@graphql-modules/core";
 import typeDefs from "./Schema";
 import resolvers from "./Resolvers";
 import * as config from "../../Config";
-import {CommonModule} from "../common";
-import {IServerContext} from "../common/Models";
-import {AUTHENTICATION_PROVIDER_CLASS, IAuthenticationModuleConfig, IAuthenticationModuleRequest, IAuthenticationProvider} from "./Helper";
+import {CommonModule} from "../common/Index";
+import {ServerContext} from "../common/Models";
+import {AUTHENTICATION_PROVIDER_CLASS, AuthenticationModuleConfig, AuthenticationModuleRequest, AuthenticationProviderType} from "./Helper";
 import AuthenticationProvider from "./Provider";
 
-export const AuthenticationModule = new GraphQLModule<IAuthenticationModuleConfig, IAuthenticationModuleRequest, IServerContext>({
+export const AuthenticationModule = new GraphQLModule<AuthenticationModuleConfig, AuthenticationModuleRequest, ServerContext>({
   name: "AuthenticationModule",
   typeDefs,
   resolvers,
   imports: [CommonModule],
   providers: [{provide: AUTHENTICATION_PROVIDER_CLASS, useClass: AuthenticationProvider}],
   context: async (request, currentContext, sessionInfo) => {
-    const provider = sessionInfo.injector.get<IAuthenticationProvider>(AUTHENTICATION_PROVIDER_CLASS);
+    const provider = sessionInfo.injector.get<AuthenticationProviderType>(AUTHENTICATION_PROVIDER_CLASS);
 
     return provider.context(request, currentContext, sessionInfo);
   },
