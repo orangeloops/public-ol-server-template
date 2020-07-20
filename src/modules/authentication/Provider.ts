@@ -206,7 +206,7 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
 
     const mailjet = require("node-mailjet").connect(this.config.MAILJET_APIKEY_PUBLIC, this.config.MAILJET_APIKEY_PRIVATE);
 
-    let message: any = {
+    const message: any = {
       CustomCampaign: this.config.MAILJET_CAMPAIGN,
 
       From: {
@@ -296,7 +296,7 @@ export default class AuthenticationProvider implements IAuthenticationProvider {
 
     email = email.trim().toLowerCase();
 
-    let user = await models.User.findOne({where: {email: email}});
+    const user = await models.User.findOne({where: {email: email}});
 
     if (_.isNil(user)) throw new UserInputError(errorMessage);
 

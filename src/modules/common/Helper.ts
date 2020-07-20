@@ -34,7 +34,7 @@ export default class CommonHelper {
 
   static parseCursorHash = (hash: string): string => Buffer.from(hash, "base64").toString("ascii");
 
-  static getUUID(short: boolean = true): string {
+  static getUUID(short = true): string {
     if (short) {
       const buf = new Buffer(16);
       const uuidLong = uuid.v4(null, buf);
